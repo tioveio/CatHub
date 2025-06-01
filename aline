@@ -1,0 +1,109 @@
+-- Gui para Arceus X / Xeno
+local player = game:GetService("Players").LocalPlayer
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "MuscleLegendsGUI"
+
+local main = Instance.new("Frame", gui)
+main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+main.Size = UDim2.new(0, 300, 0, 400)
+main.Position = UDim2.new(0.35, 0, 0.2, 0)
+
+local title = Instance.new("TextLabel", main)
+title.Text = "Muscle Legends Script"
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+
+local options = {
+    "Auto Strength", "Fast Strength", "Auto Rebirth", "Fast Rebirth",
+    "Auto Agility", "Auto Durability", "Auto Gems", "Auto Kill Players"
+}
+
+local toggles = {}
+for i, name in ipairs(options) do
+    local button = Instance.new("TextButton", main)
+    button.Size = UDim2.new(0.9, 0, 0, 35)
+    button.Position = UDim2.new(0.05, 0, 0, 40 + (i - 1) * 40)
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Font = Enum.Font.SourceSans
+    button.TextSize = 18
+    button.Text = name .. ": OFF"
+    toggles[name] = false
+
+    button.MouseButton1Click:Connect(function()
+        toggles[name] = not toggles[name]
+        button.Text = name .. (toggles[name] and ": ON" or ": OFF")
+    end)
+end
+
+-- Loops
+spawn(function()
+    while wait(0.1) do
+        if toggles["Auto Strength"] then
+            game:GetService("ReplicatedStorage").Events.Workout:FireServer("rep")
+        end
+        if toggles["Fast Strength"] then
+            for i = 1, 3 do
+                game:GetService("ReplicatedStorage").Events.Workout:FireServer("rep")
+            end
+        end
+    end
+end)
+
+spawn(function()
+    while wait(1) do
+        if toggles["Auto Rebirth"] then
+            game:GetService("ReplicatedStorage").Rebirth:FireServer()
+        end
+        if toggles["Fast Rebirth"] then
+            for i = 1, 2 do
+                game:GetService("ReplicatedStorage").Rebirth:FireServer()
+            end
+        end
+    end
+end)
+
+spawn(function()
+    while wait(0.3) do
+        if toggles["Auto Agility"] then
+            local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+            if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+        end
+        if toggles["Auto Durability"] then
+            game:GetService("ReplicatedStorage").Events.Durability:FireServer("dur")
+        end
+    end
+end)
+
+spawn(function()
+    while wait(1) do
+        if toggles["Auto Gems"] then
+            for _, gem in pairs(workspace.Gem:GetChildren()) do
+                if gem:IsA("MeshPart") then
+                    player.Character.HumanoidRootPart.CFrame = gem.CFrame
+                    wait(0.1)
+                end
+            end
+        end
+    end
+end)
+
+spawn(function()
+    while wait(1) do
+        if toggles["Auto Kill Players"] then
+            for _, target in pairs(game.Players:GetPlayers()) do
+                if target ~= player and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
+                    local tool = player.Character:FindFirstChildOfClass("Tool")
+                    if tool then
+                        tool:Activate()
+                    end
+                    wait(0.3)
+                end
+            end
+        end
+    end
+end)
