@@ -1,0 +1,40 @@
+-- Coloque este script em StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local clickEvent = ReplicatedStorage:WaitForChild("Click") -- Substitua com o nome real do evento
+
+-- Variável de controle
+local autoClick = false
+
+-- GUI
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.Name = "AutoClickGUI"
+
+local toggleButton = Instance.new("TextButton", screenGui)
+toggleButton.Size = UDim2.new(0, 150, 0, 50)
+toggleButton.Position = UDim2.new(0, 20, 0, 100)
+toggleButton.Text = "Ativar Auto Click"
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.TextSize = 18
+toggleButton.BorderSizePixel = 0
+toggleButton.Active = true
+
+-- Lógica de clique
+toggleButton.MouseButton1Click:Connect(function()
+    autoClick = not autoClick
+    toggleButton.Text = autoClick and "Desativar Auto Click" or "Ativar Auto Click"
+    toggleButton.BackgroundColor3 = autoClick and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(0, 170, 255)
+end)
+
+-- Auto click loop
+RunService.RenderStepped:Connect(function()
+    if autoClick then
+        clickEvent:FireServer()
+    end
+end)
