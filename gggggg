@@ -1,0 +1,17 @@
+-- Auto Click Script (educacional)
+-- Só funcione se você estiver no jogo e com permissões para testar
+-- NÃO use em servidores públicos
+
+local player = game.Players.LocalPlayer
+local runService = game:GetService("RunService")
+local replicatedStorage = game:GetService("ReplicatedStorage")
+
+local clickEvent = replicatedStorage:WaitForChild("Click") -- nome fictício
+
+local autoClick = true
+
+runService.RenderStepped:Connect(function()
+    if autoClick then
+        clickEvent:FireServer()
+    end
+end)
